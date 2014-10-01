@@ -149,7 +149,7 @@ void dance() {
     for (int i = 0; i < 10; i++) {
       moveForward();
       delay(danceStepInterval);
-      moveBackward);
+      moveBackward();
       delay(danceStepInterval);
     }
 
