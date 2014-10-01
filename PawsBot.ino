@@ -1,4 +1,6 @@
 #include <Servo.h>
+#include <TimedAction.h>
+
 Servo frontServo, backServo; //create two "servo" objects to control the servos
  
 const int frontServoPin = 9; //pin on arduino where front servo is connected
@@ -13,7 +15,10 @@ int stepDelay = 300;    //delay in milliseconds between each step
  
 int backOff = 12;       //distance in inches read by PING sensor before the rebot moves backwards
  
- 
+TimedAction danceTimer = TimedAction(60000, dance);
+char dancing = 0;
+const int danceInterval = 5;  // minutes between dances
+const int danceStepInterval = 2000;  // milliseconds between dance steps
  
 void setup(){
   frontServo.attach(frontServoPin);
@@ -22,44 +27,42 @@ void setup(){
   frontServo.write(frontDefault); //set the servos to their default positions
   backServo.write(backDefault);
  
+  Serial.begin(9600);
+  Serial.println("paws");  // identify the robot to any listening devices
+ 
   delay(5000);    //wait 5 seconds before walking
 }
- 
- 
- 
+
 void loop(){
   long duration, inches;
  
-  //the PING is triggered by a HIGH pulse of 2 or more microseconds
-  //give a short LOW pulse beforehand to ensure a clean HIGH pulse:
-  pinMode(pingPin, OUTPUT);
-  digitalWrite(pingPin, LOW);
-  delayMicroseconds(2);
-  digitalWrite(pingPin, HIGH);
-  delayMicroseconds(5);
-  digitalWrite(pingPin, LOW);
+  danceTimer.check();
  
-  //read PING signal to find out how long the echo took (in microseconds)
-  //fun fact: there are 1 MILLION microseconds in a second
-  pinMode(pingPin, INPUT);
-  duration = pulseIn(pingPin, HIGH);
- 
-  //translate time into distance
-  inches = microsecondsToInches(duration);
- 
- 
-  if (inches <= backOff) //if something is closer or equal to the back off distance
-  {
-	moveBackward();      //move backward
+  if (!dancing) {
+    //the PING is triggered by a HIGH pulse of 2 or more microseconds
+    //give a short LOW pulse beforehand to ensure a clean HIGH pulse:
+    pinMode(pingPin, OUTPUT);
+    digitalWrite(pingPin, LOW);
+    delayMicroseconds(2);
+    digitalWrite(pingPin, HIGH);
+    delayMicroseconds(5);
+    digitalWrite(pingPin, LOW);
+   
+    //read PING signal to find out how long the echo took (in microseconds)
+    //fun fact: there are 1 MILLION microseconds in a second
+    pinMode(pingPin, INPUT);
+    duration = pulseIn(pingPin, HIGH);
+
+    //translate time into distance
+    inches = microsecondsToInches(duration);
+   
+    if (inches <= backOff) //if something is closer or equal to the back off distance
+      moveBackward();      //move backward
+    else                   //if not
+      moveForward();       //move forward
   }
-  else                   //if not
-  {
-	moveForward();       //move forward
-  }
- 
  
 }
- 
  
 //----------------------------MEASURMENT---------------------------
 long microsecondsToInches(long microseconds)
@@ -72,7 +75,6 @@ long microsecondsToInches(long microseconds)
   return microseconds / 74 / 2;
 }
 //----------------------------MEASURMENT---------------------------
- 
  
 //----------------------------MOVEMENT---------------------------
 void moveForward(){
@@ -134,3 +136,26 @@ void moveBackward(){
 }
 //----------------------------MOVEMENT---------------------------
 
+void dance() {
+  static int minCount = 1;
+	
+  minCount++;
+  if (minCount == danceInterval) {
+    dancing = 1;
+
+    Serial.println("d1b");
+
+    // do the dance
+    for (int i = 0; i < 10; i++) {
+      moveForward();
+      delay(danceStepInterval);
+      moveBackward);
+      delay(danceStepInterval);
+    }
+
+    // reset flags
+    Serial.println("d1e");
+    dancing = 0;
+    minCount = 1;
+  }
+}
