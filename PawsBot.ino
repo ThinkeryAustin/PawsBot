@@ -8,7 +8,7 @@ const int backServoPin = 10; //pin on arduino where back servo is connected
 const int pingPin = 7;       //pin on arduino where PING sensor is connected
  
 int frontDefault = 70;  //these values represent the Servos "default" angle,
-int backDefault = 65; //perpendicular to the body of the robot
+int backDefault = 110; //perpendicular to the body of the robot
  
 int stepAngle = 20;     //angle each set of legs will travel from "default"
 int stepDelay = 300;    //delay in milliseconds between each step
@@ -79,24 +79,24 @@ long microsecondsToInches(long microseconds)
 //----------------------------MOVEMENT---------------------------
 void moveForward(){
   // 1
-  frontServo.write(frontDefault - 30);
-  backServo.write(backDefault   + 30);
-  delay(400);
+  frontServo.write(frontDefault + 30);
+  backServo.write(backDefault   - 30);
+  delay(300);
 
   // 2
-  frontServo.write(frontDefault + 30);
+  frontServo.write(frontDefault - 30);
   backServo.write(backDefault   + 30);
-  delay(400);
+  delay(300);
  
   // 3
-  frontServo.write(frontDefault + 30);
-  backServo.write(backDefault   - 30);
-  delay(400);
+  // frontServo.write(frontDefault + 30);
+  // backServo.write(backDefault   - 30);
+  // delay(400);
  
   // 4
-  frontServo.write(frontDefault - 30);
-  backServo.write(backDefault   - 30);
-  delay(400);
+  // frontServo.write(frontDefault - 30);
+  // backServo.write(backDefault   - 30);
+  // delay(400);
  
   /*
   1: \-/
@@ -108,24 +108,24 @@ void moveForward(){
  
 void moveBackward(){
   // 1
-  frontServo.write(frontDefault + 30);
-  backServo.write(backDefault   - 30);
-  delay(300);
- 
-  // 2
   frontServo.write(frontDefault - 30);
   backServo.write(backDefault   + 30);
-  delay(300);
+  delay(400);
+ 
+  // 2
+  frontServo.write(frontDefault + 30);
+  backServo.write(backDefault   + 30);
+  delay(400);
  
   // 3
-  // frontServo.write(frontDefault + 50);
-  // backServo.write(backDefault   - 25);
-  // delay(300);
+  frontServo.write(frontDefault + 30);
+  backServo.write(backDefault   - 30);
+  delay(400);
  
   // 4
-  // frontServo.write(frontDefault - 30);
-  // backServo.write(backDefault   - 25);
-  // delay(300);
+  frontServo.write(frontDefault - 30);
+  backServo.write(backDefault   - 30);
+  delay(400);
  
   /*
   1: /-\
